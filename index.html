@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#070506">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Apex · Swipe</title>
+<style>
+:root{--bg:#070506;--ink:#f7f5ef;--muted:#9aa2b4;--faint:#5a6376;--gold:#e8b43e;--yes:#3ccf7a;--no:#ff5a5a;--glass:#ffffff0e;--brd:#ffffff22;
+  --f:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",system-ui,sans-serif;color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:var(--f);overflow:hidden;-webkit-user-select:none;user-select:none}
+body{display:flex;flex-direction:column;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+header{display:flex;align-items:center;gap:10px;padding:12px 16px 6px}
+.brand{font-weight:700;font-size:1.05rem;display:flex;align-items:center;gap:8px}.brand b{color:var(--gold)}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 12px var(--gold)}
+.dot.off{background:var(--faint);box-shadow:none}
+.who{flex:1;font-size:.78rem;color:var(--muted);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mbtn{font:inherit;font-weight:700;font-size:.85rem;color:var(--ink);background:var(--glass);border:1px solid var(--brd);border-radius:99px;padding:7px 12px}
+.mbtn b{color:var(--gold)}
+main{flex:1;position:relative;margin:6px 14px 0}
+.card{position:absolute;inset:0;border-radius:22px;overflow:hidden;background:#15121a;box-shadow:0 18px 50px #000a;touch-action:none;will-change:transform}
+.card.back{transform:scale(.95) translateY(10px);filter:brightness(.6)}
+.card img.po{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.card.wide img.po{height:46%;object-position:center}
+.card.wide .blur{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(28px) brightness(.45);transform:scale(1.2)}
+.info{position:absolute;left:0;right:0;bottom:0;padding:70px 18px 18px;background:linear-gradient(transparent,#000d 38%,#000)}
+.info h2{margin:0 0 6px;font-size:1.6rem;line-height:1.1;letter-spacing:-.02em}
+.meta{font-size:.8rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 10px}.meta .pv{color:var(--gold);font-weight:600}
+.ov{font-size:.86rem;line-height:1.35;color:#d9d6cf;margin:8px 0 0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.tag{position:absolute;top:14px;left:14px;font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:#000a;border:1px solid var(--brd);border-radius:99px;padding:5px 10px}
+.tag.hot{color:var(--gold);border-color:var(--gold)}
+.stamp{position:absolute;top:44px;font-size:2.1rem;font-weight:900;letter-spacing:.05em;border:4px solid;border-radius:10px;padding:2px 12px;opacity:0}
+.stamp.y{left:22px;color:var(--yes);transform:rotate(-14deg)}.stamp.n{right:22px;color:var(--no);transform:rotate(14deg)}
+.btns{display:flex;justify-content:center;gap:34px;padding:14px 0 16px}
+.btns button{width:68px;height:68px;border-radius:50%;border:1px solid var(--brd);background:var(--glass);font-size:1.7rem;color:var(--ink)}
+.btns .no{color:var(--no)}.btns .yes{color:var(--yes)}
+.btns button:active{transform:scale(.92)}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;gap:14px}
+.screen h1{margin:0;font-size:1.7rem;letter-spacing:-.02em}.screen p{margin:0;color:var(--muted);line-height:1.45;max-width:320px}
+.pick{font:inherit;font-size:1.1rem;font-weight:700;color:var(--ink);background:var(--glass);border:1px solid var(--brd);border-radius:16px;padding:16px 24px;min-width:220px}
+.pick:active{background:var(--gold);color:#000}
+#over{position:fixed;inset:0;background:#000e;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:9;padding:24px;text-align:center}
+#over.on{display:flex;animation:pop .35s ease}
+@keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+#over h1{margin:0;font-size:2.4rem;color:var(--gold);letter-spacing:-.02em}
+#over img{width:180px;border-radius:14px;box-shadow:0 0 60px #e8b43e55}
+#over p{margin:0;color:var(--muted)}
+#list{position:fixed;inset:0;background:var(--bg);z-index:8;display:none;flex-direction:column;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+#list.on{display:flex}
+#list .body{flex:1;overflow:auto;padding:4px 16px 24px}
+#list h3{margin:18px 0 8px;font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.li{display:flex;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid #ffffff0d}
+.li img{width:52px;height:74px;object-fit:cover;border-radius:8px;background:#222}
+.li b{display:block;font-size:.95rem}.li span{font-size:.78rem;color:var(--muted)}
+.empty{color:var(--faint);font-size:.85rem;padding:8px 0}
+</style></head>
+<body>
+<header><span class="brand"><span class="dot off" id="dot"></span>Apex <b>Swipe</b></span><span class="who" id="who"></span><button class="mbtn" id="mbtn">♥ <b id="mcount">0</b></button></header>
+<main id="main"><div class="screen"><h1>Getting the deck…</h1><p>One sec.</p></div></main>
+<div class="btns" id="btns" style="visibility:hidden"><button class="no" id="bno" aria-label="No">✕</button><button class="yes" id="byes" aria-label="Yes">♥</button></div>
+<div id="over"></div>
+<div id="list"><header><span class="brand">Your list</span><span class="who"></span><button class="mbtn" id="lclose">Back to swiping</button></header><div class="body" id="lbody"></div></div>
+<script src="core.js"></script>
+<script>
+(function(){
+  var A=window.ApexSwipe,main=document.getElementById('main'),btns=document.getElementById('btns');
+  function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e;}
+  function screen(h,p,extra){main.innerHTML='';var s=el('div','screen');s.appendChild(el('h1',null,h));if(p)s.appendChild(el('p',null,p));if(extra)s.appendChild(extra);main.appendChild(s);btns.style.visibility='hidden';}
+  var m=/^#(apx[a-z0-9]{22})\.([A-Za-z0-9_-]{43})$/.exec(location.hash);
+  if(!m){screen('Scan the code on Apex','This page only works from the QR code on the Mac.');return;}
+  if(!(window.crypto&&crypto.subtle)){screen('This browser can’t do it','Open the link in Safari or Chrome.');return;}
+  var topic=m[1],S=new A.State(),store='apx-'+topic,me=null;
+  try{me=JSON.parse(localStorage.getItem(store)||'null');}catch(e){}
+  var cur=null,last=null,pending={},ptmr=null,shown=0;
+  function imgOK(u){return typeof u==='string'&&(/^https:\/\/image\.tmdb\.org\//.test(u)||/^https:\/\/i\.ytimg\.com\//.test(u));}
+  function kindName(it){return it.k==='comedy'?'Stand-up':it.k==='tv'?'Series':'Film';}
+  function fmt(it){if(it.k==='comedy')return it.rt||'';var n=+it.rt;if(!n)return '';var h=Math.floor(n/60),r=n%60;return h?h+'h'+(r?' '+r+'m':''):r+'m';}
+  var link=new A.Link(topic,m[2],function(msg){
+    var r=S.apply(msg);
+    if(r==='deck'){if(!me)askName();else if(!cur||(cur&&cur.__empty))deal();}
+    else if(r==='end'){screen('That’s the session closed','Start a new one from Apex on the Mac.');}
+    else if(r&&r.match!=null&&me&&S.votes[me.d]&&S.votes[me.d][r.match])matchPop(S.byI[r.match]);
+    else if(r==='sw'&&cur&&cur.__empty&&me)deal();
+    hud();
+  },function(up){document.getElementById('dot').classList.toggle('off',!up);});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)link.reconnect();});
+  setTimeout(function(){if(!S.items.length)screen('Waiting for Apex…','Make sure Swipe is open on the Mac. This page connects on any signal.');},6000);
+
+  function askName(){
+    if(!S.items.length)return;
+    var box=el('div');box.style.cssText='display:flex;flex-direction:column;gap:12px;margin-top:8px';
+    var taken={};for(var d in S.who)if(S.votes[d])taken[S.who[d]]=1;
+    (S.names.length?S.names:['Player 1','Player 2']).forEach(function(n){var b=el('button','pick',n+(taken[n]?' (on another phone)':''));b.onclick=function(){setMe(n);};box.appendChild(b);});
+    screen('Who’s swiping?','Swipe right if you’d watch it tonight, left if not. You only see a match when you both say yes.',box);
+  }
+  function setMe(n){var r=new Uint8Array(6);crypto.getRandomValues(r);me={d:A.b64u(r),nm:n};try{localStorage.setItem(store,JSON.stringify(me));}catch(e){}
+    S.apply({ty:'hi',d:me.d,nm:n});link.send({ty:'hi',d:me.d,nm:n});deal();hud();}
+  function hud(){
+    var mine=me?S.votes[me.d]:null,ms=S.matches().filter(function(it){return mine&&mine[it.i];});
+    document.getElementById('mcount').textContent=ms.length;
+    var others=S.voters().filter(function(d){return !me||d!==me.d;}).map(function(d){return (S.who[d]||'Someone')+' · '+S.swiped(d);});
+    document.getElementById('who').textContent=others.length?others.join('  '):(me?'Waiting for the other phone…':'');
+  }
+  function cardEl(it){
+    var c=el('div','card'+(it.k==='comedy'?' wide':''));
+    if(it.k==='comedy'&&imgOK(it.p)){var bl=el('div','blur');bl.style.backgroundImage='url("'+it.p+'")';c.appendChild(bl);}
+    if(imgOK(it.p)){var im=new Image();im.className='po';im.src=it.p;im.alt='';im.draggable=false;c.appendChild(im);}
+    var pv=S.voters().some(function(d){return me&&d!==me.d&&S.votes[d][it.i]&&S.votes[d][it.i].y;});
+    if(pv)c.appendChild(el('span','tag hot','They like this one'));else c.appendChild(el('span','tag',kindName(it)));
+    c.appendChild(el('div','stamp y','YES'));c.appendChild(el('div','stamp n','NOPE'));
+    var inf=el('div','info');inf.appendChild(el('h2',null,it.t||''));
+    var mt=el('div','meta');[it.k==='comedy'?it.who:it.y,kindName(it),fmt(it),it.gn,it.r&&it.r!=='0.0'?'★ '+it.r:''].forEach(function(x){if(x)mt.appendChild(el('span',null,x));});
+    if(it.pv)mt.appendChild(el('span','pv','on '+it.pv));inf.appendChild(mt);
+    if(it.o)inf.appendChild(el('p','ov',it.o));c.appendChild(inf);return c;
+  }
+  function deal(){
+    if(!me){askName();return;}
+    var it=A.nextCard(S,me.d,last);
+    if(!it){cur={__empty:1};screen('That’s the lot','Tap ♥ to see your matches. If Apex deals more cards they’ll appear here.');return;}
+    cur=it;main.innerHTML='';btns.style.visibility='visible';
+    var nx=null;S.votes[me.d][it.i]={y:0,n:0,tmp:1};nx=A.nextCard(S,me.d,it.i);delete S.votes[me.d][it.i];
+    if(nx){var b=cardEl(nx);b.classList.add('back');main.appendChild(b);}
+    var c=cardEl(it);main.appendChild(c);drag(c);shown++;
+  }
+  function vote(y,c){
+    if(!cur||cur.__empty)return;var it=cur;cur=null;
+    var dir=y?1:-1;if(c){c.style.transition='transform .28s ease-in';c.style.transform='translateX('+(dir*innerWidth*1.3)+'px) rotate('+(dir*24)+'deg)';}
+    var v={};v[it.i]=y?1:0;var r=S.apply({ty:'sw',d:me.d,nm:me.nm,v:v});
+    pending[it.i]=y?1:0;clearTimeout(ptmr);ptmr=setTimeout(flush,700);
+    last=it.i;setTimeout(function(){deal();hud();if(r&&r.match!=null)matchPop(S.byI[r.match]);},c?220:0);
+  }
+  function flush(){if(!Object.keys(pending).length)return;link.send({ty:'sw',d:me.d,nm:me.nm,v:pending});pending={};}
+  window.addEventListener('pagehide',flush);
+  document.getElementById('bno').onclick=function(){var c=main.querySelector('.card:not(.back)');vote(false,c);};
+  document.getElementById('byes').onclick=function(){var c=main.querySelector('.card:not(.back)');vote(true,c);};
+  function drag(c){
+    var x0=0,y0=0,dx=0,on=false,sy=c.querySelector('.stamp.y'),sn=c.querySelector('.stamp.n');
+    c.addEventListener('pointerdown',function(e){on=true;x0=e.clientX;y0=e.clientY;dx=0;c.setPointerCapture(e.pointerId);c.style.transition='none';});
+    c.addEventListener('pointermove',function(e){if(!on)return;dx=e.clientX-x0;var dy=(e.clientY-y0)*.3;
+      c.style.transform='translate('+dx+'px,'+dy+'px) rotate('+(dx/16)+'deg)';sy.style.opacity=Math.max(0,Math.min(1,dx/90));sn.style.opacity=Math.max(0,Math.min(1,-dx/90));});
+    function up(){if(!on)return;on=false;if(Math.abs(dx)>90){vote(dx>0,c);return;}
+      c.style.transition='transform .25s cubic-bezier(.2,1.4,.4,1)';c.style.transform='';sy.style.opacity=0;sn.style.opacity=0;}
+    c.addEventListener('pointerup',up);c.addEventListener('pointercancel',up);
+  }
+  var over=document.getElementById('over');
+  function matchPop(it){if(!it)return;over.innerHTML='';over.appendChild(el('h1',null,'It’s a match!'));
+    if(imgOK(it.p)){var im=new Image();im.src=it.p;im.alt='';over.appendChild(im);}
+    over.appendChild(el('h2',null,it.t));over.appendChild(el('p',null,'You both said yes. It’s up on Apex, ready to play.'));
+    var k=el('button','pick','Keep swiping');k.onclick=function(){over.classList.remove('on');};over.appendChild(k);
+    var l=el('button','pick','See our list');l.onclick=function(){over.classList.remove('on');openList();};over.appendChild(l);
+    over.classList.add('on');hud();}
+  function row(it,sub){var r=el('div','li');if(imgOK(it.p)){var im=new Image();im.src=it.p;im.alt='';r.appendChild(im);}
+    var t=el('div');t.appendChild(el('b',null,it.t));t.appendChild(el('span',null,sub));r.appendChild(t);return r;}
+  function openList(){var b=document.getElementById('lbody');b.innerHTML='';var rk=A.ranked(S);
+    b.appendChild(el('h3',null,'Matches'));if(!rk.matches.length)b.appendChild(el('div','empty','None yet. Keep swiping.'));
+    rk.matches.forEach(function(it){b.appendChild(row(it,kindName(it)+(it.pv?' · on '+it.pv:'')));});
+    b.appendChild(el('h3',null,'Close calls · one of you liked'));if(!rk.close.length)b.appendChild(el('div','empty','Nothing yet.'));
+    rk.close.slice(0,15).forEach(function(it){var who=S.voters().filter(function(d){return S.votes[d][it.i]&&S.votes[d][it.i].y;}).map(function(d){return S.who[d]||'Someone';});
+      b.appendChild(row(it,(who[0]?who[0]+' liked it · ':'')+kindName(it)));});
+    document.getElementById('list').classList.add('on');}
+  document.getElementById('mbtn').onclick=openList;
+  document.getElementById('lclose').onclick=function(){document.getElementById('list').classList.remove('on');};
+})();
+</script>
+</body></html>
