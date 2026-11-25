@@ -48,6 +48,9 @@ main{flex:1;position:relative;margin:6px 14px 0}
 #over h1{margin:0;font-size:2.4rem;color:var(--gold);letter-spacing:-.02em}
 #over img{width:180px;border-radius:14px;box-shadow:0 0 60px #e8b43e55}
 #over p{margin:0;color:var(--muted)}
+.giggle{font-size:1.05rem;color:#f7f5ef;font-style:italic;max-width:440px}
+.fetti{position:absolute;top:-40px;font-size:26px;pointer-events:none;animation:fall linear forwards;z-index:4}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
 #list{position:fixed;inset:0;background:var(--bg);z-index:8;display:none;flex-direction:column;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
 #list.on{display:flex}
 #list .body{flex:1;overflow:auto;padding:4px 16px 24px}
@@ -145,12 +148,14 @@ main{flex:1;position:relative;margin:6px 14px 0}
     c.addEventListener('pointerup',up);c.addEventListener('pointercancel',up);
   }
   var over=document.getElementById('over');
-  function matchPop(it){if(!it)return;over.innerHTML='';over.appendChild(el('h1',null,'It’s a match!'));
+  function giggleLine(){var L=["Finally. Something you agree on.", "Relationship saved. For tonight anyway.", "Same brain detected.", "No more “I don’t mind, you pick.”", "Couch: booked. Snacks: your problem.", "Compatibility: suspiciously high.", "That’s 40 minutes of arguing you just got back.", "Put the kettle on. Or the popcorn.", "Tinder wishes it was this good.", "Witnessed. Nobody’s backing out now."];return L[Math.floor(Math.random()*L.length)];}
+  function confetti(host){var E=['🍿','💛','🎉','❤️','✨','🥳','😂'];for(var n=0;n<34;n++){var s=document.createElement('span');s.className='fetti';s.textContent=E[n%E.length];s.style.left=(Math.random()*100)+'%';s.style.animationDuration=(1.8+Math.random()*1.8)+'s';s.style.animationDelay=(Math.random()*0.6)+'s';host.appendChild(s);setTimeout(function(x){return function(){x.remove();};}(s),4200);}}
+    function matchPop(it){if(!it)return;over.innerHTML='';over.appendChild(el('h1',null,'It’s a match!'));
     if(imgOK(it.p)){var im=new Image();im.src=it.p;im.alt='';over.appendChild(im);}
-    over.appendChild(el('h2',null,it.t));over.appendChild(el('p',null,'You both said yes. It’s up on Apex, ready to play.'));
+    over.appendChild(el('h2',null,it.t));over.appendChild(el('div','giggle',giggleLine()));over.appendChild(el('p',null,'You both said yes. It’s up on Apex, ready to play.'));
     var k=el('button','pick','Keep swiping');k.onclick=function(){over.classList.remove('on');};over.appendChild(k);
     var l=el('button','pick','See our list');l.onclick=function(){over.classList.remove('on');openList();};over.appendChild(l);
-    over.classList.add('on');hud();}
+    over.classList.add('on');confetti(over);hud();}
   function row(it,sub){var r=el('div','li');if(imgOK(it.p)){var im=new Image();im.src=it.p;im.alt='';r.appendChild(im);}
     var t=el('div');t.appendChild(el('b',null,it.t));t.appendChild(el('span',null,sub));r.appendChild(t);return r;}
   function openList(){var b=document.getElementById('lbody');b.innerHTML='';var rk=A.ranked(S);
