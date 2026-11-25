@@ -108,8 +108,7 @@ main{flex:1;position:relative;margin:6px 14px 0}
     var c=el('div','card'+(it.k==='comedy'?' wide':''));
     if(it.k==='comedy'&&imgOK(it.p)){var bl=el('div','blur');bl.style.backgroundImage='url("'+it.p+'")';c.appendChild(bl);}
     if(imgOK(it.p)){var im=new Image();im.className='po';im.src=it.p;im.alt='';im.draggable=false;c.appendChild(im);}
-    var pv=S.voters().some(function(d){return me&&d!==me.d&&S.votes[d][it.i]&&S.votes[d][it.i].y;});
-    if(pv)c.appendChild(el('span','tag hot','They like this one'));else c.appendChild(el('span','tag',kindName(it)));
+    c.appendChild(el('span','tag',kindName(it)));   // no 'they liked it' hint: swipes stay blind until you match
     c.appendChild(el('div','stamp y','YES'));c.appendChild(el('div','stamp n','NOPE'));
     var inf=el('div','info');inf.appendChild(el('h2',null,it.t||''));
     var mt=el('div','meta');[it.k==='comedy'?it.who:it.y,kindName(it),fmt(it),it.gn,it.r&&it.r!=='0.0'?'★ '+it.r:''].forEach(function(x){if(x)mt.appendChild(el('span',null,x));});
