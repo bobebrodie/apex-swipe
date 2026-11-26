@@ -66,7 +66,7 @@ main{flex:1;position:relative;margin:6px 14px 0}
 <div class="btns" id="btns" style="visibility:hidden"><button class="no" id="bno" aria-label="No">✕</button><button class="yes" id="byes" aria-label="Yes">♥</button></div>
 <div id="over"></div>
 <div id="list"><header><span class="brand">Your list</span><span class="who"></span><button class="mbtn" id="lclose">Back to swiping</button></header><div class="body" id="lbody"></div></div>
-<script src="core.js"></script>
+<script src="core.js?v=1795653706"></script>
 <script>
 (function(){
   var A=window.ApexSwipe,main=document.getElementById('main'),btns=document.getElementById('btns');
@@ -150,7 +150,7 @@ main{flex:1;position:relative;margin:6px 14px 0}
     c.addEventListener('pointerup',up);c.addEventListener('pointercancel',up);
   }
   var over=document.getElementById('over');
-  function giggleLine(){var L=["Finally. Something you agree on.", "Relationship saved. For tonight anyway.", "Same brain detected.", "No more “I don’t mind, you pick.”", "Couch: booked. Snacks: your problem.", "Compatibility: suspiciously high.", "That’s 40 minutes of arguing you just got back.", "Put the kettle on. Or the popcorn.", "Tinder wishes it was this good.", "Witnessed. Nobody’s backing out now."];return L[Math.floor(Math.random()*L.length)];}
+  function giggleLine(){var L=["Finally. Something you agree on.", "Relationship saved. For tonight anyway.", "Same brain detected.", "No more “I don’t mind, you pick.”", "Couch: booked. Snacks: your problem.", "Compatibility: suspiciously high.", "That’s 40 minutes of arguing you just got back.", "Put the kettle on. Or the popcorn.", "Tinder wishes it was this good.", "Witnessed. Nobody’s backing out now.", "Two yeses. Zero compromise. Iconic.", "Cancel your plans. Oh wait, this is the plan.", "Hold hands. Or the remote. Your call.", "Love is real and it’s on the telly.", "Scientists are baffled. You agreed first try.", "Somebody pinch me, a decision was made.", "Peak romance: same film, same sofa.", "The algorithm ships it.", "No take-backs. That’s the law.", "Phones down. Lights off. Go."],k='apx-giggles',bag=[];try{bag=JSON.parse(localStorage.getItem(k)||'[]');}catch(e){}bag=bag.filter(function(i){return i<L.length;});if(!bag.length){for(var i=0;i<L.length;i++)bag.push(i);for(var j=bag.length-1;j>0;j--){var r=Math.floor(Math.random()*(j+1)),t=bag[j];bag[j]=bag[r];bag[r]=t;}}var n=bag.shift();try{localStorage.setItem(k,JSON.stringify(bag));}catch(e){}return L[n];}
   function confetti(host){var E=['🍿','💛','🎉','❤️','✨','🥳','😂'];for(var n=0;n<34;n++){var s=document.createElement('span');s.className='fetti';s.textContent=E[n%E.length];s.style.left=(Math.random()*100)+'%';s.style.animationDuration=(1.8+Math.random()*1.8)+'s';s.style.animationDelay=(Math.random()*0.6)+'s';host.appendChild(s);setTimeout(function(x){return function(){x.remove();};}(s),4200);}}
     function matchPop(it){if(!it)return;over.innerHTML='';over.appendChild(el('h1',null,'It’s a match!'));
     if(imgOK(it.p)){var im=new Image();im.src=it.p;im.alt='';over.appendChild(im);}
