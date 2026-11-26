@@ -55,7 +55,7 @@ main{flex:1;position:relative;margin:6px 14px 0}
 #list.on{display:flex}
 #list .body{flex:1;overflow:auto;padding:4px 16px 24px}
 #list h3{margin:18px 0 8px;font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
-.li{display:flex;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid #ffffff0d}
+.li{display:flex;gap:12px;align-items:center;padding:8px 0;border:0;border-bottom:1px solid #ffffff0d;background:none;color:var(--ink);font:inherit;text-align:left;width:100%}.li:active{background:#ffffff10}
 .li img{width:52px;height:74px;object-fit:cover;border-radius:8px;background:#222}
 .li b{display:block;font-size:.95rem}.li span{font-size:.78rem;color:var(--muted)}
 .empty{color:var(--faint);font-size:.85rem;padding:8px 0}
@@ -77,7 +77,7 @@ main{flex:1;position:relative;margin:6px 14px 0}
   if(!(window.crypto&&crypto.subtle)){screen('This browser can’t do it','Open the link in Safari or Chrome.');return;}
   var topic=m[1],S=new A.State(),store='apx-'+topic,me=null;
   try{me=JSON.parse(localStorage.getItem(store)||'null');}catch(e){}
-  var cur=null,last=null,pending={},ptmr=null,shown=0;
+  var cur=null,last=null,pending={},ptmr=null,shown=0,outSent=-1,outT=null;
   function imgOK(u){return typeof u==='string'&&(/^https:\/\/image\.tmdb\.org\//.test(u)||/^https:\/\/i\.ytimg\.com\//.test(u));}
   function kindName(it){return it.k==='comedy'?'Stand-up':it.k==='tv'?'Series':'Film';}
   function fmt(it){if(it.k==='comedy')return it.rt||'';var n=+it.rt;if(!n)return '';var h=Math.floor(n/60),r=n%60;return h?h+'h'+(r?' '+r+'m':''):r+'m';}
@@ -121,7 +121,9 @@ main{flex:1;position:relative;margin:6px 14px 0}
   function deal(){
     if(!me){askName();return;}
     var it=A.nextCard(S,me.d,last);
-    if(!it){cur={__empty:1};screen('That’s the lot','Tap ♥ to see your matches. If Apex deals more cards they’ll appear here.');return;}
+    if(!it){cur={__empty:1};if(outSent!==S.items.length){outSent=S.items.length;link.send({ty:'out',d:me.d});}
+      screen('Dealing more cards…','Apex is shuffling a fresh batch. Tap ♥ to see your matches meanwhile.');
+      clearTimeout(outT);outT=setTimeout(function(){if(cur&&cur.__empty)screen('That’s the lot for now','Apex on the Mac needs to be open to deal more. Tap ♥ to see your matches.');},15000);return;}
     cur=it;main.innerHTML='';btns.style.visibility='visible';
     var nx=null;S.votes[me.d][it.i]={y:0,n:0,tmp:1};nx=A.nextCard(S,me.d,it.i);delete S.votes[me.d][it.i];
     if(nx){var b=cardEl(nx);b.classList.add('back');main.appendChild(b);}
@@ -156,10 +158,10 @@ main{flex:1;position:relative;margin:6px 14px 0}
     var k=el('button','pick','Keep swiping');k.onclick=function(){over.classList.remove('on');};over.appendChild(k);
     var l=el('button','pick','See our list');l.onclick=function(){over.classList.remove('on');openList();};over.appendChild(l);
     over.classList.add('on');confetti(over);hud();}
-  function row(it,sub){var r=el('div','li');if(imgOK(it.p)){var im=new Image();im.src=it.p;im.alt='';r.appendChild(im);}
+  function row(it,sub){var r=el('button','li');r.onclick=function(){link.send({ty:'open',i:it.i});var s=r.querySelector('span');if(s)s.textContent='Opening on Apex…';};if(imgOK(it.p)){var im=new Image();im.src=it.p;im.alt='';r.appendChild(im);}
     var t=el('div');t.appendChild(el('b',null,it.t));t.appendChild(el('span',null,sub));r.appendChild(t);return r;}
   function openList(){var b=document.getElementById('lbody');b.innerHTML='';var rk=A.ranked(S);
-    b.appendChild(el('h3',null,'Matches'));if(!rk.matches.length)b.appendChild(el('div','empty','None yet. Keep swiping.'));
+    b.appendChild(el('h3',null,'Matches · tap one to open it on Apex'));if(!rk.matches.length)b.appendChild(el('div','empty','None yet. Keep swiping.'));
     rk.matches.forEach(function(it){b.appendChild(row(it,kindName(it)+(it.pv?' · on '+it.pv:'')));});
     b.appendChild(el('h3',null,'Close calls · one of you liked'));if(!rk.close.length)b.appendChild(el('div','empty','Nothing yet.'));
     rk.close.slice(0,15).forEach(function(it){var who=S.voters().filter(function(d){return S.votes[d][it.i]&&S.votes[d][it.i].y;}).map(function(d){return S.who[d]||'Someone';});
