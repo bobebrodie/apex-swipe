@@ -66,7 +66,7 @@ main{flex:1;position:relative;margin:6px 14px 0}
 <div class="btns" id="btns" style="visibility:hidden"><button class="no" id="bno" aria-label="No">✕</button><button class="yes" id="byes" aria-label="Yes">♥</button></div>
 <div id="over"></div>
 <div id="list"><header><span class="brand">Your list</span><span class="who"></span><button class="mbtn" id="lclose">Back to swiping</button></header><div class="body" id="lbody"></div></div>
-<script src="core.js?v=1795653706"></script>
+<script src="core.js?v=1795655237"></script>
 <script>
 (function(){
   var A=window.ApexSwipe,main=document.getElementById('main'),btns=document.getElementById('btns');
@@ -79,7 +79,7 @@ main{flex:1;position:relative;margin:6px 14px 0}
   try{me=JSON.parse(localStorage.getItem(store)||'null');}catch(e){}
   var cur=null,last=null,pending={},ptmr=null,shown=0,outSent=-1,outT=null;
   function imgOK(u){return typeof u==='string'&&(/^https:\/\/image\.tmdb\.org\//.test(u)||/^https:\/\/i\.ytimg\.com\//.test(u));}
-  function kindName(it){return it.k==='comedy'?'Stand-up':it.k==='tv'?'Series':'Film';}
+  function kindName(it){return it.k==='comedy'||it.su?'Stand-up':it.k==='tv'?'Series':'Film';}
   function fmt(it){if(it.k==='comedy')return it.rt||'';var n=+it.rt;if(!n)return '';var h=Math.floor(n/60),r=n%60;return h?h+'h'+(r?' '+r+'m':''):r+'m';}
   var link=new A.Link(topic,m[2],function(msg){
     var r=S.apply(msg);
